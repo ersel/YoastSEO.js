@@ -1,35 +1,51 @@
 var countSyllableFunction = require("../../js/stringProcessing/countSyllables.js");
 
+/*
 describe("a syllable counter for English textstrings", function(){
-	/*it("returns the number of syllables", function(){
+	it("returns the number of syllables", function(){
 		expect( countSyllableFunction("this is a textstring", "en_US") ).toBe( 5 );
-		expect( countSyllableFunction("human beings") ).toBe( 4 );
-		expect( countSyllableFunction("along the shoreline") ).toBe( 5 );
-		expect( countSyllableFunction("A piece of text to calculate scores") ).toBe( 10 );
+		expect( countSyllableFunction("human beings", "en_US") ).toBe( 4 );
+		expect( countSyllableFunction("along the shoreline", "en_US") ).toBe( 5 );
+		expect( countSyllableFunction("A piece of text to calculate scores", "en_US") ).toBe( 10 );
 
-		expect( countSyllableFunction( "This is the year that Yoast turns 5 years old. A natural time to reflect upon how the company is doing and what it should and should not be doing and what we want for the future. Today we’re proud to announce that we’ve been acquired by CrowdFavorite" ) ).toBe( 63 );
-		expect( countSyllableFunction("One question we get quite often in our website reviews is whether we can help people recover from the drop they noticed in their rankings or traffic. A lot of the times, this is a legitimate drop and people were actually in a bit of trouble.") ).toBe( 65 );
-		expect( countSyllableFunction("Bridger Pass is a mountain pass in Carbon County, Wyoming on the Continental Divide near the south Great Divide Basin bifurcation point, i.e., the point at which the divide appears to split and envelop the basin.") ).toBe( 57 );
+		expect( countSyllableFunction( "This is the year that Yoast turns 5 years old. A natural time to reflect upon how the company is doing and what it should and should not be doing and what we want for the future. Today we’re proud to announce that we’ve been acquired by CrowdFavorite", "en_US") ).toBe( 63 );
+		expect( countSyllableFunction("One question we get quite often in our website reviews is whether we can help people recover from the drop they noticed in their rankings or traffic. A lot of the times, this is a legitimate drop and people were actually in a bit of trouble.", "en_US") ).toBe( 65 );
+		expect( countSyllableFunction("Bridger Pass is a mountain pass in Carbon County, Wyoming on the Continental Divide near the south Great Divide Basin bifurcation point, i.e., the point at which the divide appears to split and envelop the basin.", "en_US") ).toBe( 57 );
 		
-		expect( countSyllableFunction("A test based on exclusionwords for syllablecount") ).toBe( 14 );
-	});*/
+		expect( countSyllableFunction("A test based on exclusionwords for syllablecount", "en_US") ).toBe( 14 );
+	});
 });
-
+*/
 
 describe("a syllable counter for Dutch textstrings", function(){
-	it("returns the number of syllables for a sentence with one-syllable words", function(){
-		expect( countSyllableFunction("bye hallo verjaardagscake superbarbecuetang hightea computerupgrades invoice", "nl_NL") ).toBe( 22 );
+
+
+	it("returns the number of syllables of words affected by the substractSyllables regex", function(){
+		expect( countSyllableFunction("cue, bridge, beachclub", "nl_NL") ).toBe( 4 );
 	});
 
-	it("returns the number of syllables for a sentence with one-syllable words", function(){
+	it("returns the number of syllables for a sentence with exclusions", function(){
+		expect( countSyllableFunction("keynoter keynote keynotes kite kiter breakdance breakdancer race racer", "nl_NL") ).toBe( 18 );
+	});
+
+	it("returns the number of syllables for a sentence with exclusions", function(){
+		expect( countSyllableFunction("bye hallo verjaardagscake superbarbecuetang hightea computerupgrades invoice", "nl_NL") ).toBe( 22 );
+	});
+	it("returns the number of syllables for a sentence with diacritics words", function(){
+		expect( countSyllableFunction("hé café", "nl_NL") ).toBe( 3 );
+	});
+	it("returns the number of syllables for a sentence with add and substract syllables", function(){
+		expect( countSyllableFunction("face bastion", "nl_NL") ).toBe( 4 );
+	});
+
+	it("returns the number of syllables for a sentence with exclusions", function(){
 		expect( countSyllableFunction("fleece fleecedeken image images imagecontract pluimage style styleboek stylen douche douches office officer", "nl_NL") ).toBe( 29 );
 	});
 
-	it("returns the number of syllables for a sentence with one-syllable words", function(){
-		expect( countSyllableFunction("keynoter keynote keynotes kite kiter linedance linedancer race racer", "nl_NL") ).toBe( 18 );
+	it("returns the number of syllables for a sentence with exclusions", function(){
+		expect( countSyllableFunction("bye dei lone", "nl_NL") ).toBe( 4 );
 	});
 
-/*
 	it("returns the number of syllables for a sentence with one-syllable words", function(){
 		expect( countSyllableFunction("dit is een huis", "nl_NL") ).toBe( 4 );
 	});
@@ -54,14 +70,9 @@ describe("a syllable counter for Dutch textstrings", function(){
 		expect( countSyllableFunction("reünie, suède, microbiële", "nl_NL") ).toBe( 11 );
 	});
 
-	it("returns the number of syllables of words affected by the substractSyllables regex", function(){
-		expect( countSyllableFunction("cue, bridge, beachclub", "nl_NL") ).toBe( 4 );
-	});
-
 	it("returns the number of syllables of words affected by the substractSyllables regex:cue", function(){
 		expect( countSyllableFunction("cue", "nl_NL") ).toBe( 1 );
 	});
-
 
 	it("returns the number of syllables of words from the exclusion word list", function(){
 		expect( countSyllableFunction("airline, fauteuil, lyceum, vibe", "nl_NL") ).toBe( 8 );
@@ -77,9 +88,10 @@ describe("a syllable counter for Dutch textstrings", function(){
 		expect( countSyllableFunction("patiënt, recipiënt, deficiënt", "nl_NL") ).toBe( 8 );
 	});
 
-	 it("returns the number of syllables of words affected by the exclusionCompound regex", function(){
-	 expect( countSyllableFunction("voetbalteam, soap, teaktafel", "nl_NL") ).toBe( 7 );
- });
+	it("returns the number of syllables of words affected by the exclusionCompound regex", function(){
+		 expect( countSyllableFunction("voetbalteam, soap, teaktafel", "nl_NL") ).toBe( 7 );
+	});
+
 	it("returns the number of syllables of words affected by the exclusionCompound regex", function(){
 		expect( countSyllableFunction("teaktafel", "nl_NL") ).toBe( 3 );
 	});
@@ -91,7 +103,7 @@ describe("a syllable counter for Dutch textstrings", function(){
 	it("returns the number of syllables of a word that should not be affected by the exclusionCompound regex", function(){
 		expect( countSyllableFunction("gemeenteambtenaar, ", "nl_NL") ).toBe( 6 );
 	});
-	*/
+
 });
 
 

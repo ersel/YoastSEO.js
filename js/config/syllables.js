@@ -357,7 +357,6 @@ var dutchSyllables = {
 		{ word: "franchise", syllables: 2 },
 		{ word: "freelance", syllables: 2 },
 		{ word: "lease", syllables: 1 },
-		{ word: "linedance", syllables: 2 },
 		{ word: "lounge", syllables: 1 },
 		{ word: "merchandise", syllables: 3 },
 		{ word: "performance", syllables: 3 },
