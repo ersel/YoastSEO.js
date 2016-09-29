@@ -21,13 +21,13 @@ function splitOnWord( sentence, matches ) {
 	forEach( matches, function( match ) {
 		var splitSentence = currentSentence.split( match );
 		if ( ! isEmpty( splitSentence[ 0 ] ) ) {
-			subSentences.push( splitSentence[ 0 ] );
+			subSentences = subSentences.concat( splitSentence[ 0 ] );
 		}
 		var startIndex = currentSentence.indexOf( match );
 		var endIndex = currentSentence.length;
 		currentSentence = ( stripSpaces( currentSentence.substr( startIndex, endIndex ) ) );
 	} );
-	subSentences.push( stripSpaces( currentSentence ) );
+	subSentences = subSentences.concat( stripSpaces( currentSentence ) );
 	return subSentences;
 }
 
@@ -42,7 +42,7 @@ function splitSentences( text ) {
 	var splitSentences = [];
 	forEach( sentences, function( sentence ) {
 		var matches = sentence.match( stopwordRegex ) || [];
-		splitSentences.push( splitOnWord( sentence, matches ) );
+		splitSentences = splitSentences.concat( splitOnWord( sentence, matches ) );
 	} );
 	return splitSentences;
 }

@@ -1,9 +1,9 @@
 var verbsBeginningWithGeRegex = /^((ge)\S+t($|[ \n\r\t\.,'\(\)\"\+\-;!?:\/»«‹›<>]))/ig;
-var verbsBeginningWithErVerEntBeZerRegex = /^((her|er|ver|ent|be|zer)\S+t($|[ \n\r\t\.,'\(\)\"\+\-;!?:\/»«‹›<>]))/ig;
+var verbsBeginningWithErVerEntBeZerRegex = /^((be|ent|er|her|ver|zer)\S+t($|[ \n\r\t\.,'\(\)\"\+\-;!?:\/»«‹›<>]))/ig;
 var verbsWithGeInMiddleRegex = /(ab|an|auf|aus|vor|wieder|zurück)(ge)\S+t($|[ \n\r\t\.,'\(\)\"\+\-;!?:\/»«‹›<>])/ig;
-var verbsWithErVerEntBeZerInMiddleRegex = /(ab|an|auf|aus|vor|wieder|zurück)(her|er|ver|ent|be|zer)\S+t($|[ \n\r\t\.,'\(\)\"\+\-;!?:\/»«‹›<>])/ig;
+var verbsWithErVerEntBeZerInMiddleRegex = /(ab|an|auf|aus|vor|wieder|zurück)(be|ent|er|her|ver|zer)\S+t($|[ \n\r\t\.,'\(\)\"\+\-;!?:\/»«‹›<>])/ig;
 var verbsEndingWithIertRegex = /\S+iert($|[ \n\r\t\.,'\(\)\"\+\-;!?:\/»«‹›<>])/ig;
-var noParticipleRegex = /\S+(apparat|arbeit|dienst|haft|halt|kraft|not|pflicht|schaft|schrift|tät|wert|zeit)($|[ \n\r\t\.,'\(\)\"\+\-;!?:\/»«‹›<>])/ig;
+var exceptionsRegex = /\S+(apparat|arbeit|dienst|haft|halt|kraft|not|pflicht|schaft|schrift|tät|wert|zeit)($|[ \n\r\t\.,'\(\)\"\+\-;!?:\/»«‹›<>])/ig;
 
 var verbsBeginningWithGe = function( word ) {
 	return word.match( verbsBeginningWithGeRegex ) || [];
@@ -25,10 +25,9 @@ var verbsEndingWithIert = function( word ) {
 	return word.match( verbsEndingWithIertRegex ) || [];
 };
 
-var noParticiple = function( word ) {
-	return word.match( noParticipleRegex ) || [];
+var exceptions = function( word ) {
+	return word.match( exceptionsRegex ) || [];
 };
-
 
 module.exports = function() {
 	return {
@@ -37,6 +36,6 @@ module.exports = function() {
 		verbsWithGeInMiddle: verbsWithGeInMiddle,
 		verbsWithErVerEntBeZerInMiddle: verbsWithErVerEntBeZerInMiddle,
 		verbsEndingWithIert: verbsEndingWithIert,
-		noParticiple: noParticiple,
+		exceptions: exceptions,
 	};
 };

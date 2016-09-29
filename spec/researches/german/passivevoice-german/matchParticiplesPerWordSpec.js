@@ -21,6 +21,11 @@ describe("Test for matching German participles", function(){
 		expect( matchParticiplesPerWord( sentence ) ).toEqual( [ "erzählt" ] );
 	});
 
+	it("returns matched participles with 'iert'.", function(){
+		var sentence = "Das wurde probiert";
+		expect( matchParticiplesPerWord( sentence ) ).toEqual( [ "probiert" ] );
+	});
+
 	it("returns an empty array when there is no participle", function(){
 		var sentence = "Yahoo prüfte seitdem den Sachverhalt.";
 		expect( matchParticiplesPerWord( sentence ) ).toEqual( [ ] );

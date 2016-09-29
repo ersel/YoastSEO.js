@@ -4,7 +4,7 @@ var verbsWithGeInMiddle = regexFunction.verbsWithGeInMiddle;
 var verbsBeginningWithErVerEntBeZer = regexFunction.verbsBeginningWithErVerEntBeZer;
 var verbsWithErVerEntBeZerInMiddle = regexFunction.verbsWithErVerEntBeZerInMiddle;
 var verbsEndingWithIert = regexFunction.verbsEndingWithIert;
-var noParticiple = regexFunction.noParticiple;
+var exceptions = regexFunction.exceptions;
 
 describe("Test for matching German participles", function(){
 	it("returns matched participles with 'ge' at the beginning.", function(){
@@ -12,6 +12,8 @@ describe("Test for matching German participles", function(){
 		expect( verbsBeginningWithGe( word ) ).toEqual( [ "gewandert" ] );
 		var word = "vorgesetzt";
 		expect( verbsBeginningWithGe( word ) ).toEqual( [ ] );
+		var word = "gekauft.";
+		expect( verbsBeginningWithGe( word ) ).toEqual( [ "gekauft." ] );
 	});
 	it("returns matched participles with 'ge' in the middle.", function(){
 		var word = "vorgesetzt";
@@ -37,10 +39,10 @@ describe("Test for matching German participles", function(){
 		var word = "infizierten";
 		expect( verbsEndingWithIert( word ) ).toEqual( [ ] );
 	});
-	it("returns matched participles with 'iert' at the end.", function(){
+	it("returns matched participles that are in the exceptionParticiplesActive list.", function(){
 		var word = "bedenkzeit";
-		expect( noParticiple( word ) ).toEqual( [ "bedenkzeit" ] );
+		expect( exceptions( word ) ).toEqual( [ "bedenkzeit" ] );
 		var word = "bedruckt";
-		expect( noParticiple( word ) ).toEqual( [ ] );
+		expect( exceptions( word ) ).toEqual( [ ] );
 	});
 });

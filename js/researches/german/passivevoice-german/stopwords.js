@@ -40,6 +40,7 @@ module.exports = function() {
 		"und",
 		"ungeachtet",
 		"waehrend",
+		"während",
 		"weil",
 		"welche",
 		"welchem",
@@ -57,7 +58,6 @@ module.exports = function() {
 		"wie",
 		"wiewohl",
 		"wohingegen",
-		"während",
 		"zumal",
 	];
 };
