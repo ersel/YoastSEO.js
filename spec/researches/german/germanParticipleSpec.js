@@ -5,13 +5,45 @@ describe( "A test for checking the german Participle", function() {
 		var mockParticiple = new GermanParticiple( "geschlossen", "Wir werden geschlossen haben",  "werden",  "irregular" );
 		expect( mockParticiple.getParticiple() ).toBe( "geschlossen" );
 		expect( mockParticiple.hasHabenSeinException() ).toBe( true );
+		expect( mockParticiple.isInExceptionList() ).toBe( false );
+		expect( mockParticiple.hasNounSuffix() ).toBe( false );
 		expect( mockParticiple.isPassive() ).toBe( false );
 	});
 
-	it( "checks the properties of the german participle object without a passive", function() {
+	it( "checks the properties of the german participle object without a passive, but with 'sein'", function() {
 		var mockParticiple = new GermanParticiple( "geschlossen", "Es wird geschlossen worden sein.",  "werden",  "irregular" );
 		expect( mockParticiple.getParticiple() ).toBe( "geschlossen" );
 		expect( mockParticiple.hasHabenSeinException() ).toBe( false );
+		expect( mockParticiple.isInExceptionList() ).toBe( false );
+		expect( mockParticiple.hasNounSuffix() ).toBe( false );
 		expect( mockParticiple.isPassive() ).toBe( true );
 	});
+
+	it( "checks the properties of the german participle object without a passive, and without 'haben'/'sein'", function() {
+		var mockParticiple = new GermanParticiple( "gekauft", "Es wird gekauft.",  "wird",  "ge- at beginning" );
+		expect( mockParticiple.getParticiple() ).toBe( "gekauft" );
+		expect( mockParticiple.hasHabenSeinException() ).toBe( false );
+		expect( mockParticiple.isInExceptionList() ).toBe( false );
+		expect( mockParticiple.hasNounSuffix() ).toBe( false );
+		expect( mockParticiple.isPassive() ).toBe( true );
+	});
+
+	it( "checks the properties of the german participle object with a participle from the exception list.", function () {
+		var mockParticiple = new GermanParticiple( "geburtsakt", "Es wird geburtsakt.",  "wird",  "ge- at beginning" );
+		expect( mockParticiple.getParticiple() ).toBe( "geburtsakt" );
+		expect( mockParticiple.hasHabenSeinException() ).toBe( false );
+		expect( mockParticiple.isInExceptionList() ).toBe( true );
+		expect( mockParticiple.hasNounSuffix() ).toBe( false );
+		expect( mockParticiple.isPassive() ).toBe( false );
+	});
+
+	it( "checks the properties of the german participle object with a participle with a noun suffix.", function () {
+		var mockParticiple = new GermanParticiple( "gemütlichkeit", "Es wird gemütlichkeit.",  "wird",  "ge- at beginning" );
+		expect( mockParticiple.getParticiple() ).toBe( "gemütlichkeit" );
+		expect( mockParticiple.hasHabenSeinException() ).toBe( false );
+		expect( mockParticiple.isInExceptionList() ).toBe( false );
+		expect( mockParticiple.hasNounSuffix() ).toBe( true );
+		expect( mockParticiple.isPassive() ).toBe( false );
+	});
+
 });
