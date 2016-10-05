@@ -20,7 +20,7 @@ Participle.prototype.getParticiple = function() {
  * @returns {String} The subsentence.
  */
 Participle.prototype.getSubSentence = function() {
-	return this._subSentence
+	return this._subSentence;
 };
 
 /**

@@ -4,7 +4,6 @@ var stripSpaces = require( "../stringProcessing/stripSpaces.js" );
 var stripHTMLTags = require( "../stringProcessing/stripHTMLTags.js" ).stripFullTags;
 var matchWordInSentence = require( "../stringProcessing/matchWordInSentence.js" );
 var normalizeSingleQuotes = require( "../stringProcessing/quotes.js" ).normalizeSingle;
-var getIndices = require( "../stringProcessing/indices" ).getIndices;
 var getIndicesOfList = require( "../stringProcessing/indices" ).getIndicesOfList;
 var filterIndices = require( "../stringProcessing/indices" ).filterIndices;
 var sortIndices = require( "../stringProcessing/indices" ).sortIndices;

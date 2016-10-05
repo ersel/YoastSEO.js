@@ -1,4 +1,4 @@
-Participle = require( "../../values/Participle.js" );
+var Participle = require( "../../values/Participle.js" );
 
 var getIndices = require( "../../stringProcessing/indices.js" ).getIndices;
 var getIndicesOfList = require( "../../stringProcessing/indices.js" ).getIndicesOfList;

@@ -130,7 +130,7 @@ var isFollowedByHabenSein = function( subSentence ) {
  * @returns {boolean} Returns true if passive, otherwise returns false.
  */
 
-module.exports =function( subSentence ) {
+module.exports = function( subSentence ) {
 	var passive = false;
 	if( subSentence.match( auxiliaryRegex ) === null ) {
 		return passive;
