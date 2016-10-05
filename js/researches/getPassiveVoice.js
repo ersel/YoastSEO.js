@@ -4,7 +4,10 @@ var stripSpaces = require( "../stringProcessing/stripSpaces.js" );
 var stripHTMLTags = require( "../stringProcessing/stripHTMLTags.js" ).stripFullTags;
 var matchWordInSentence = require( "../stringProcessing/matchWordInSentence.js" );
 var normalizeSingleQuotes = require( "../stringProcessing/quotes.js" ).normalizeSingle;
-
+var getIndices = require( "../stringProcessing/indices" ).getIndices;
+var getIndicesOfList = require( "../stringProcessing/indices" ).getIndicesOfList;
+var filterIndices = require( "../stringProcessing/indices" ).filterIndices;
+var sortIndices = require( "../stringProcessing/indices" ).sortIndices;
 var getLanguage = require( "../helpers/getLanguage.js" );
 
 // English.
@@ -16,6 +19,7 @@ var stopwords = require( "./english/passivevoice-english/stopwords.js" )();
 
 // German.
 var getSubSentencesGerman = require( "./german/getSubSentences.js" );
+var determinePassivesGerman = require( "./german/determinePassives.js" );
 
 var filter = require( "lodash/filter" );
 var isUndefined = require( "lodash/isUndefined" );
@@ -28,81 +32,6 @@ var regularVerbsRegex = /\w+ed($|[ \n\r\t\.,'\(\)\"\+\-;!?:\/»«‹›<>])/ig;
 
 var ingExclusionArray = [ "king", "cling", "ring", "being" ];
 var irregularExclusionArray = [ "get", "gets", "getting", "got", "gotten" ];
-
-/**
- * Returns the indices of a string in a sentence. If it is found multiple times, it will return multiple indices.
- *
- * @param {string} part The part to find in the sentence.
- * @param {string} sentence The sentence to check for parts.
- * @returns {Array} All indices found.
- */
-function getIndicesOf( part, sentence ) {
-	var startIndex = 0;
-	var searchStringLength = part.length;
-	var index, indices = [];
-	while ( ( index = sentence.indexOf( part, startIndex ) ) > -1 ) {
-		indices.push(
-			{
-				index: index,
-				match: part,
-			}
-		);
-		startIndex = index + searchStringLength;
-	}
-	return indices;
-}
-
-/**
- * Matches string with an array, returns the word and the index it was found on.
- *
- * @param {string} sentence The sentence to match the strings from the array to.
- * @param {Array} matches The array with strings to match.
- * @returns {Array} The array with matches, containing the index of the match and the matched string.
- * Returns an empty array if none are found.
- */
-var matchArray = function( sentence, matches ) {
-	var matchedParts = [];
-
-	forEach( matches, function( part ) {
-		part = stripSpaces( part );
-		if ( ! matchWordInSentence( part, sentence ) ) {
-			return;
-		}
-		matchedParts = matchedParts.concat( getIndicesOf( part, sentence ) );
-	} );
-
-	return matchedParts;
-};
-
-/**
- * Sorts the array on the index property of each entry.
- *
- * @param {Array} indices The array with indices.
- * @returns {Array} The sorted array with indices.
- */
-var sortIndices = function( indices ) {
-	return indices.sort( function( a, b ) {
-		return ( a.index > b.index );
-	} );
-};
-
-/**
- * Filters duplicate entries if the indices overlap.
- *
- * @param {Array} indices The array with indices to be filtered.
- * @returns {Array} The filtered array.
- */
-var filterIndices = function( indices ) {
-	indices = sortIndices( indices );
-	for ( var i = 0; i < indices.length; i++ ) {
-		// If the next index is within the range of the current index and the length of the word, remove it
-		// This makes sure we don't match combinations twice, like "even though" and "though".
-		if ( ! isUndefined( indices[ i + 1 ] ) && indices[ i + 1 ].index < indices[ i ].index + indices[ i ].match.length ) {
-			indices.pop( i + 1 );
-		}
-	}
-	return indices;
-};
 
 /**
  * Gets active verbs (ending in ing) to determine sentence breakers.
@@ -129,13 +58,13 @@ var getVerbsEndingInIng = function( sentence ) {
  */
 var getSentenceBreakers = function( sentence ) {
 	sentence = sentence.toLocaleLowerCase();
-	var auxiliaryIndices = matchArray( sentence, auxiliaries );
+	var auxiliaryIndices = getIndicesOfList( sentence, auxiliaries );
 
-	var stopwordIndices = matchArray( sentence, stopwords );
+	var stopwordIndices = getIndicesOfList( sentence, stopwords );
 	stopwordIndices = filterIndices( stopwordIndices );
 
 	var ingVerbs = getVerbsEndingInIng( sentence );
-	var ingVerbsIndices = matchArray( sentence, ingVerbs );
+	var ingVerbsIndices = getIndicesOfList( sentence, ingVerbs );
 
 	// Concat all indices arrays and sort them.
 	var indices = [].concat( auxiliaryIndices, stopwordIndices, ingVerbsIndices );
@@ -146,12 +75,13 @@ var getSentenceBreakers = function( sentence ) {
  * Gets the subsentences from a sentence by determining sentence breakers.
  *
  * @param {string} sentence The sentence to split up in subsentences.
+ * @param {string} language The language to use for determining how to get subsentences.
  * @returns {Array} The array with all subsentences of a sentence that have an auxiliary.
  */
-var getSubsentences = function( sentence, locale ) {
+var getSubsentences = function( sentence, language ) {
 	var subSentences = [];
 
-	switch( getLanguage( locale ) ) {
+	switch( language ) {
 		case "de":
 			subSentences = getSubSentencesGerman( sentence );
 			break;
@@ -256,7 +186,7 @@ var isHavingException = function( subSentence, verbs ) {
 	var indexOfHaving = subSentence.indexOf( "having" );
 
 	if ( indexOfHaving > -1 ) {
-		var verbIndices = matchArray( subSentence, verbs );
+		var verbIndices = getIndicesOfList( subSentence, verbs );
 
 		if ( ! isUndefined( verbIndices[ 0 ] ) && ! isUndefined( verbIndices[ 0 ].index ) ) {
 			// 7 is the number of characters of the word 'having' including space.
@@ -324,16 +254,23 @@ var getExceptions = function( subSentence, verbs ) {
  * @param {string} subSentence The subsentence to check for passives.
  * @returns {boolean} True if passive is found, false if no passive is found.
  */
-var determinePassives = function( subSentence ) {
-	var regularVerbs = getRegularVerbs( subSentence );
-	var irregularVerbs = getIrregularVerbs( subSentence );
-	var verbs = regularVerbs.concat( irregularVerbs );
+var determinePassives = function( subSentence, language ) {
+	switch( language ) {
+		case "de":
+			return determinePassivesGerman( subSentence );
+			break;
+		case "en":
+		default:
+			var regularVerbs = getRegularVerbs( subSentence );
+			var irregularVerbs = getIrregularVerbs( subSentence );
+			var verbs = regularVerbs.concat( irregularVerbs );
 
-	// Checks for exceptions in the found verbs.
-	var exceptions = getExceptions( subSentence, verbs );
+			// Checks for exceptions in the found verbs.
+			var exceptions = getExceptions( subSentence, verbs );
 
-	// If there is any exception, this subsentence cannot be passive.
-	return verbs.length > 0 && exceptions === false;
+			// If there is any exception, this subsentence cannot be passive.
+			return verbs.length > 0 && exceptions === false;
+	}
 };
 
 /**
@@ -345,6 +282,7 @@ var determinePassives = function( subSentence ) {
 module.exports = function( paper ) {
 	var text = paper.getText();
 	var locale = paper.getLocale();
+	var language = getLanguage( locale );
 	var sentences = getSentences( text );
 	var passiveSentences = [];
 
@@ -352,11 +290,11 @@ module.exports = function( paper ) {
 	forEach( sentences, function( sentence ) {
 		var strippedSentence = stripHTMLTags( sentence );
 
-		var subSentences = getSubsentences( strippedSentence, locale );
+		var subSentences = getSubsentences( strippedSentence, language );
 
 		var passive = false;
 		forEach( subSentences, function( subSentence ) {
-			passive = passive || determinePassives( subSentence );
+			passive = passive || determinePassives( subSentence, language );
 		} );
 
 		if ( passive === true ) {

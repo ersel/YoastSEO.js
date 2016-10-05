@@ -20,50 +20,6 @@ var exceptionsRegex = /\S+(apparat|arbeit|dienst|haft|halt|kraft|not|pflicht|sch
 var auxiliaryRegex = arrayToRegex( auxiliaries );
 
 /**
- * Returns the indices of a string in a sentence. If it is found multiple times, it will return multiple indices.
- *
- * @param {string} part The part to find in the sentence.
- * @param {string} sentence The sentence to check for parts.
- * @returns {Array} All indices found.
- */
-var getIndicesOf = function( part, sentence ) {
-	var startIndex = 0;
-	var searchStringLength = part.length;
-	var index, indices = [];
-	while ( ( index = sentence.indexOf( part, startIndex ) ) > -1 ) {
-		indices.push(
-			{
-				index: index,
-				match: part,
-			}
-		);
-		startIndex = index + searchStringLength;
-	}
-	return indices;
-};
-
-/**
-* Matches string with an array, returns the word and the index it was found on.
-*
-* @param {string} sentence The sentence to match the strings from the array to.
-* @param {Array} matches The array with strings to match.
-* @returns {Array} The array with matches, containing the index of the match and the matched string.
-* Returns an empty array if none are found.
-*/
-var matchArray = function( sentence, matches ) {
-	var matchedParts = [];
-
-	forEach( matches, function( part ) {
-		part = stripSpaces( part );
-		if ( ! matchWordInSentence( part, sentence ) ) {
-			return;
-		}
-		matchedParts = matchedParts.concat( getIndicesOf( part, sentence ) );
-	} );
-
-	return matchedParts;
-};
-/**
  * Filters out non-participles that look like participles.
  *
  * @param {Array} matches The array with matched participles.
@@ -147,6 +103,10 @@ module.exports = function( paper ) {
 	var text = paper.getText();
 	var sentences = getSentences( text );
 	var passiveSentences = [];
+
+	forEach( sentences, function( sentence ){
+
+	} );
 
 	// Get subsentences for each sentence.
 	forEach( sentences, function( sentence ) {
