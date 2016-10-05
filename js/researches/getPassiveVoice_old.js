@@ -5,17 +5,12 @@ var stripHTMLTags = require( "../stringProcessing/stripHTMLTags.js" ).stripFullT
 var matchWordInSentence = require( "../stringProcessing/matchWordInSentence.js" );
 var normalizeSingleQuotes = require( "../stringProcessing/quotes.js" ).normalizeSingle;
 
-var getLanguage = require( "../helpers/getLanguage.js" );
-
-// English.
 var nonverbEndingEd = require( "./english/passivevoice-english/non-verb-ending-ed.js" )();
 var determiners = require( "./english/passivevoice-english/determiners.js" )();
+
 var auxiliaries = require( "./english/passivevoice-english/auxiliaries.js" )();
 var irregulars = require( "./english/passivevoice-english/irregulars.js" )();
 var stopwords = require( "./english/passivevoice-english/stopwords.js" )();
-
-// German.
-var getSubSentencesGerman = require( "./german/getSubSentences.js" );
 
 var filter = require( "lodash/filter" );
 var isUndefined = require( "lodash/isUndefined" );
@@ -148,40 +143,32 @@ var getSentenceBreakers = function( sentence ) {
  * @param {string} sentence The sentence to split up in subsentences.
  * @returns {Array} The array with all subsentences of a sentence that have an auxiliary.
  */
-var getSubsentences = function( sentence, locale ) {
+var getSubsentences = function( sentence ) {
 	var subSentences = [];
 
-	switch( getLanguage( locale ) ) {
-		case "de":
-			subSentences = getSubSentencesGerman( sentence );
-			break;
-		case "en":
-		default:
-			sentence = normalizeSingleQuotes( sentence );
+	sentence = normalizeSingleQuotes( sentence );
 
-			// First check if there is an auxiliary word in the sentence.
-			if( sentence.match( auxiliaryRegex ) !== null ) {
-				var indices = getSentenceBreakers( sentence );
+	// First check if there is an auxiliary word in the sentence
+	if( sentence.match( auxiliaryRegex ) !== null ) {
+		var indices = getSentenceBreakers( sentence );
 
-				// Get the words after the found auxiliary.
-				for ( var i = 0; i < indices.length; i++ ) {
-					var endIndex = sentence.length;
-					if ( ! isUndefined( indices[ i + 1 ] ) ) {
-						endIndex = indices[ i + 1 ].index;
-					}
-
-					// Cut the sentence from the current index to the endIndex (start of next breaker, of end of sentence).
-					var subSentence = stripSpaces( sentence.substr( indices[ i ].index, endIndex - indices[ i ].index ) );
-					subSentences.push( subSentence );
-				}
+		// Get the words after the found auxiliary
+		for ( var i = 0; i < indices.length; i++ ) {
+			var endIndex = sentence.length;
+			if ( ! isUndefined( indices[ i + 1 ] ) ) {
+				endIndex = indices[ i + 1 ].index;
 			}
 
-			// If a subsentence doesn't have an auxiliary, we don't need it, so it can be filtered out.
-			subSentences = filter( subSentences, function( subSentence ) {
-				return subSentence.match( auxiliaryRegex ) !== null;
-			} );
-			break;
+			// Cut the sentence from the current index to the endIndex (start of next breaker, of end of sentence).
+			var subSentence = stripSpaces( sentence.substr( indices[ i ].index, endIndex - indices[ i ].index ) );
+			subSentences.push( subSentence );
+		}
 	}
+
+	// If a subsentence doesn't have an auxiliary, we don't need it, so it can be filtered out.
+	subSentences = filter( subSentences, function( subSentence ) {
+		return subSentence.match( auxiliaryRegex ) !== null;
+	} );
 
 	return subSentences;
 };
@@ -344,7 +331,6 @@ var determinePassives = function( subSentence ) {
  */
 module.exports = function( paper ) {
 	var text = paper.getText();
-	var locale = paper.getLocale();
 	var sentences = getSentences( text );
 	var passiveSentences = [];
 
@@ -352,7 +338,7 @@ module.exports = function( paper ) {
 	forEach( sentences, function( sentence ) {
 		var strippedSentence = stripHTMLTags( sentence );
 
-		var subSentences = getSubsentences( strippedSentence, locale );
+		var subSentences = getSubsentences( strippedSentence );
 
 		var passive = false;
 		forEach( subSentences, function( subSentence ) {
