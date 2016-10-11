@@ -83,7 +83,10 @@ var getSentenceParts = function( sentence, language ) {
 
 	switch( language ) {
 		case "de":
-			sentenceParts = getSentencePartsGerman( sentence );
+			var sentencePartsObjects = getSentencePartsGerman( sentence );
+			forEach( sentencePartsObjects, function( part ) {
+				sentenceParts.push( part.getSentencePartText() );
+			} );
 			break;
 		case "en":
 		default:
