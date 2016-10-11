@@ -1,7 +1,7 @@
 var defaults = require( "lodash/defaults" );
 
 var SentencePart = function( sentencePartText, locale ) {
-	this._sentencePartText = sentencePartText
+	this._sentencePartText = sentencePartText;
 	this._locale = locale;
 	this._isPassive = false;
 };
@@ -22,3 +22,5 @@ SentencePart.prototype.isPassive = function() {
 SentencePart.prototype.setPassive = function( passive ) {
 	this._isPassive = passive;
 };
+
+module.exports = SentencePart;

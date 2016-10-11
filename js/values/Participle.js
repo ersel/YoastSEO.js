@@ -4,7 +4,7 @@ var Participle = function( participle, subSentence, auxiliary, type ) {
 	this._subSentence = subSentence;
 	this._type = type;
 	this._auxiliary = auxiliary;
-	this._passive = true;
+	this._determinesSubsentenceIsPassive = true;
 };
 
 /**
@@ -43,16 +43,16 @@ Participle.prototype.getAuxiliary = function() {
  * Returns if the participle is passive or not.
  * @returns {boolean} True if it is passive.
  */
-Participle.prototype.isPassive = function() {
-	return this._passive;
+Participle.prototype.determineSubsentenceIsPassive = function() {
+	return this._determinesSubsentenceIsPassive;
 };
 
 /**
- * Sets the passive
- * @param passive
+ * Determines if the sentence is passive or not.
+ * @param {boolean} passive Whether the subsentence is passive.
  */
-Participle.prototype.setPassive = function( passive ) {
-	this._passive = passive;
+Participle.prototype.setSubsentencePassiveness = function( passive ) {
+	this._determinesSubsentenceIsPassive = passive;
 };
 
 module.exports = Participle;
