@@ -18,7 +18,7 @@ require( "util" ).inherits( GermanParticiple, Participle );
 
 GermanParticiple.prototype.hasException = function() {
 	var isPassive = ! this.hasNounSuffix() && ! this.isInExceptionList() && ! this.hasHabenSeinException();
-	this.setPassive( isPassive );
+	this.setSubsentencePassiveness( isPassive );
 };
 
 /**

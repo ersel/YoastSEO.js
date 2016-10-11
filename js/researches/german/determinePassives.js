@@ -2,10 +2,11 @@ var arrayToRegex = require( "../../stringProcessing/createRegexFromArray.js" );
 var matchWordInSentence = require( "../../stringProcessing/matchWordInSentence.js" );
 var stripSpaces = require( "../../stringProcessing/stripSpaces.js" );
 var removePunctuation = require( "../../stringProcessing/removePunctuation.js" );
+var indices = require( "../../stringProcessing/indices.js" );
 var auxiliaries = require( "./passivevoice-german/auxiliaries.js" )();
 var irregularParticiples = require( "./passivevoice-german/irregulars.js" )();
 var exceptionsParticiplesActive = require( "./passivevoice-german/exceptionsParticiplesActive.js" )();
-var matchParticiplesPerWord = require( "./passivevoice-german/matchParticiplesPerWord.js" )();
+var getParticiples = require( "./passivevoice-german/getParticiples.js" );
 
 var forEach = require( "lodash/forEach" );
 var map = require( "lodash/map" );
@@ -16,50 +17,6 @@ var exceptionsRegex = /\S+(apparat|arbeit|dienst|haft|halt|kraft|not|pflicht|sch
 
 var auxiliaryRegex = arrayToRegex( auxiliaries );
 
-/**
- * Returns the indices of a string in a sentence. If it is found multiple times, it will return multiple indices.
- *
- * @param {string} part The part to find in the sentence.
- * @param {string} sentence The sentence to check for parts.
- * @returns {Array} All indices found.
- */
-var getIndicesOf = function( part, sentence ) {
-	var startIndex = 0;
-	var searchStringLength = part.length;
-	var index, indices = [];
-	while ( ( index = sentence.indexOf( part, startIndex ) ) > -1 ) {
-		indices.push(
-			{
-				index: index,
-				match: part,
-			}
-		);
-		startIndex = index + searchStringLength;
-	}
-	return indices;
-};
-
-/**
- * Matches string with an array, returns the word and the index it was found on.
- *
- * @param {string} sentence The sentence to match the strings from the array to.
- * @param {Array} matches The array with strings to match.
- * @returns {Array} The array with matches, containing the index of the match and the matched string.
- * Returns an empty array if none are found.
- */
-var matchArray = function( sentence, matches ) {
-	var matchedParts = [];
-
-	forEach( matches, function( part ) {
-		part = stripSpaces( part );
-		if ( ! matchWordInSentence( part, sentence ) ) {
-			return;
-		}
-		matchedParts = matchedParts.concat( getIndicesOf( part, sentence ) );
-	} );
-
-	return matchedParts;
-};
 /**
  * Filters out non-participles that look like participles.
  *
@@ -81,11 +38,14 @@ var filterNonParticiples = function( matches ) {
  * @returns {Array} The filtered array with participles and their index.
  */
 var getRegularParticipleIndices = function( subSentence ) {
-	var matches = matchParticiplesPerWord( subSentence );
-	if ( matches.length !== 0 ) {
-		var filteredParticiples = filterNonParticiples( matches );
+	var matches = getParticiples( subSentence );
+	//todo only temp.
+	var textMatches = map( matches, "_participle" );
+
+	if ( textMatches.length !== 0 ) {
+		var filteredParticiples = filterNonParticiples( textMatches );
 	}
-	return matchArray( subSentence, filteredParticiples );
+	return indices.getIndicesOfList( subSentence, filteredParticiples );
 };
 
 /**
@@ -95,7 +55,7 @@ var getRegularParticipleIndices = function( subSentence ) {
  * @returns {Array} The array with participles and their index.
  */
 var getParticipleIndices = function( subSentence ) {
-	var irregularsIndices = matchArray( subSentence, irregularParticiples );
+	var irregularsIndices = indices.getIndicesOfList( subSentence, irregularParticiples );
 	var participleIndices = getRegularParticipleIndices( subSentence );
 	return irregularsIndices.concat( participleIndices );
 };
@@ -109,7 +69,7 @@ var getParticipleIndices = function( subSentence ) {
  */
 var isFollowedByHabenSein = function( subSentence ) {
 	var participleIndices = getParticipleIndices( subSentence );
-	var habenSeinIndices = matchArray( subSentence, [ "haben", "sein" ] );
+	var habenSeinIndices = indices.getIndicesOfList( subSentence, [ "haben", "sein" ] );
 	var followedByHabenSein = false;
 	if( participleIndices.length > 0 ) {
 		if ( habenSeinIndices.length === 0 ) {
