@@ -1,10 +1,10 @@
 
-var Participle = function( participle, subSentence, auxiliary, type ) {
+var Participle = function( participle, sentencePart, auxiliary, type ) {
 	this._participle = participle;
-	this._subSentence = subSentence;
+	this._sentencePart = sentencePart;
 	this._type = type;
 	this._auxiliary = auxiliary;
-	this._determinesSubsentenceIsPassive = true;
+	this._determinesSentencePartIsPassive = true;
 };
 
 /**
@@ -16,11 +16,11 @@ Participle.prototype.getParticiple = function() {
 };
 
 /**
- * Returns the subsentence.
- * @returns {String} The subsentence.
+ * Returns the sentence part.
+ * @returns {String} The sentence part.
  */
-Participle.prototype.getSubSentence = function() {
-	return this._subSentence;
+Participle.prototype.getSentencePart = function() {
+	return this._sentencePart;
 };
 
 /**
@@ -43,16 +43,16 @@ Participle.prototype.getAuxiliary = function() {
  * Returns if the participle is passive or not.
  * @returns {boolean} True if it is passive.
  */
-Participle.prototype.determineSubsentenceIsPassive = function() {
-	return this._determinesSubsentenceIsPassive;
+Participle.prototype.determinesSentencePartIsPassive = function() {
+	return this._determinesSentencePartIsPassive;
 };
 
 /**
  * Determines if the sentence is passive or not.
- * @param {boolean} passive Whether the subsentence is passive.
+ * @param {boolean} passive Whether the sentence part is passive.
  */
-Participle.prototype.setSubsentencePassiveness = function( passive ) {
-	this._determinesSubsentenceIsPassive = passive;
+Participle.prototype.setSentencePartPassiveness = function( passive ) {
+	this._determinesSentencePartIsPassive = passive;
 };
 
 module.exports = Participle;
