@@ -1,5 +1,11 @@
 var defaults = require( "lodash/defaults" );
 
+/**
+ *
+ * @param {string} sentencePartText The text in the sentence part.
+ * @param {string} locale The locale used for this sentence part.
+ * @constructor
+ */
 var SentencePart = function( sentencePartText, locale ) {
 	this._sentencePartText = sentencePartText;
 	this._locale = locale;
@@ -16,6 +22,10 @@ SentencePart.prototype.getSentencePartText = function() {
 
 SentencePart.prototype.isPassive = function() {
 	return this._isPassive;
+};
+
+SentencePart.prototype.getLocale = function() {
+	return this._locale;
 };
 
 // todo add check if already passive.
