@@ -11,12 +11,12 @@ var map = require( "lodash/map" );
 
 var GermanParticiple = function(  participle, subSentence, auxiliary, type ) {
 	Participle.call( this, participle, subSentence, auxiliary, type );
-	this.hasException();
+	this.isException();
 };
 
 require( "util" ).inherits( GermanParticiple, Participle );
 
-GermanParticiple.prototype.hasException = function() {
+GermanParticiple.prototype.isException = function() {
 	var isPassive = ! this.hasNounSuffix() && ! this.isInExceptionList() && ! this.hasHabenSeinException();
 	this.setSubsentencePassiveness( isPassive );
 };
