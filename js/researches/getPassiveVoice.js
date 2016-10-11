@@ -293,6 +293,7 @@ module.exports = function( paper ) {
 
 		var passive = false;
 		forEach( subSentences, function( subSentence ) {
+
 			passive = passive || determinePassives( subSentence, language );
 		} );
 
