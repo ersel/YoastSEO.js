@@ -9,8 +9,8 @@ var forEach = require( "lodash/forEach" );
 var includes = require( "lodash/includes" );
 var map = require( "lodash/map" );
 
-var GermanParticiple = function(  participle, subSentence, auxiliary, type ) {
-	Participle.call( this, participle, subSentence, auxiliary, type );
+var GermanParticiple = function(  participle, sentencePart, auxiliary, type ) {
+	Participle.call( this, participle, sentencePart, auxiliary, type );
 	this.isException();
 };
 
@@ -18,7 +18,7 @@ require( "util" ).inherits( GermanParticiple, Participle );
 
 GermanParticiple.prototype.isException = function() {
 	var isPassive = ! this.hasNounSuffix() && ! this.isInExceptionList() && ! this.hasHabenSeinException();
-	this.setSubsentencePassiveness( isPassive );
+	this.setSentencePartPassiveness( isPassive );
 };
 
 /**
@@ -50,8 +50,8 @@ GermanParticiple.prototype.hasNounSuffix = function() {
  * @returns {boolean} Returns true if it is an exception, otherwise returns false.
  */
 GermanParticiple.prototype.hasHabenSeinException = function() {
-	var participleIndices = getIndices( this.getParticiple(), this.getSubSentence() );
-	var habenSeinIndices = getIndicesOfList( this.getSubSentence(), [ "haben", "sein" ] );
+	var participleIndices = getIndices( this.getParticiple(), this.getSentencePart() );
+	var habenSeinIndices = getIndicesOfList( this.getSentencePart(), [ "haben", "sein" ] );
 	var isPassiveException = false;
 	if( participleIndices.length > 0 ) {
 		if ( habenSeinIndices.length === 0 ) {

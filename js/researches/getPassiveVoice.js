@@ -17,7 +17,7 @@ var irregulars = require( "./english/passivevoice-english/irregulars.js" )();
 var stopwords = require( "./english/passivevoice-english/stopwords.js" )();
 
 // German.
-var getSubSentencesGerman = require( "./german/getSubSentences.js" );
+var getSentencePartsGerman = require( "./german/getSentenceParts.js" );
 var determinePassivesGerman = require( "./german/determinePassives.js" );
 
 var filter = require( "lodash/filter" );
@@ -49,11 +49,11 @@ var getVerbsEndingInIng = function( sentence ) {
 };
 
 /**
- * Gets the indexes of sentence breakers (auxiliaries, stopwords and active verbs) to determine subsentences.
+ * Gets the indexes of sentence breakers (auxiliaries, stopwords and active verbs) to determine sentence parts.
  * Stopwords are filtered because they can contain duplicate matches, like "even though" and "though".
  *
  * @param {string} sentence The sentence to check for indices of auxiliaries, stopwords and active verbs.
- * @returns {Array} The array with valid indices to use for determining subsentences.
+ * @returns {Array} The array with valid indices to use for determining sentence parts.
  */
 var getSentenceBreakers = function( sentence ) {
 	sentence = sentence.toLocaleLowerCase();
@@ -71,18 +71,18 @@ var getSentenceBreakers = function( sentence ) {
 };
 
 /**
- * Gets the subsentences from a sentence by determining sentence breakers.
+ * Gets the sentence parts from a sentence by determining sentence breakers.
  *
- * @param {string} sentence The sentence to split up in subsentences.
- * @param {string} language The language to use for determining how to get subsentences.
- * @returns {Array} The array with all subsentences of a sentence that have an auxiliary.
+ * @param {string} sentence The sentence to split up in sentence parts.
+ * @param {string} language The language to use for determining how to get sentence parts.
+ * @returns {Array} The array with all parts of a sentence that have an auxiliary.
  */
-var getSubsentences = function( sentence, language ) {
-	var subSentences = [];
+var getSentenceParts = function(sentence, language ) {
+	var sentenceParts = [];
 
 	switch( language ) {
 		case "de":
-			subSentences = getSubSentencesGerman( sentence );
+			sentenceParts = getSentencePartsGerman( sentence );
 			break;
 		case "en":
 		default:
@@ -100,30 +100,30 @@ var getSubsentences = function( sentence, language ) {
 					}
 
 					// Cut the sentence from the current index to the endIndex (start of next breaker, of end of sentence).
-					var subSentence = stripSpaces( sentence.substr( indices[ i ].index, endIndex - indices[ i ].index ) );
-					subSentences.push( subSentence );
+					var sentencePart = stripSpaces( sentence.substr( indices[ i ].index, endIndex - indices[ i ].index ) );
+					sentenceParts.push( sentencePart );
 				}
 			}
 
-			// If a subsentence doesn't have an auxiliary, we don't need it, so it can be filtered out.
-			subSentences = filter( subSentences, function( subSentence ) {
-				return subSentence.match( auxiliaryRegex ) !== null;
+			// If a sentence part doesn't have an auxiliary, we don't need it, so it can be filtered out.
+			sentenceParts = filter( sentenceParts, function( sentencePart ) {
+				return sentencePart.match( auxiliaryRegex ) !== null;
 			} );
 			break;
 	}
 
-	return subSentences;
+	return sentenceParts;
 };
 
 /**
  * Gets regular passive verbs.
  *
- * @param {string} subSentence The sub sentence to check for passive verbs.
+ * @param {string} sentencePart The sentence part to check for passive verbs.
  * @returns {Array} The array with all matched verbs.
  */
-var getRegularVerbs = function( subSentence ) {
+var getRegularVerbs = function( sentencePart ) {
 	// Matches the sentences with words ending in ed
-	var matches = subSentence.match( regularVerbsRegex ) || [];
+	var matches = sentencePart.match( regularVerbsRegex ) || [];
 
 	// Filters out words ending in -ed that aren't verbs.
 	return filter( matches, function( match ) {
@@ -176,20 +176,20 @@ var getIrregularVerbs = function( sentence ) {
 /**
  * Matches 'having' with a verb directly following it. If so, it is not passive.
  *
- * @param {string} subSentence The subsentence to check for the word 'having' and a verb
+ * @param {string} sentencePart The sentence part to check for the word 'having' and a verb
  * @param {Array} verbs The array with verbs to check.
  * @returns {boolean} True if it is an exception, false if it is not.
  */
-var isHavingException = function( subSentence, verbs ) {
+var isHavingException = function( sentencePart, verbs ) {
 	// Match having with a verb directly following it. If so it is active.
-	var indexOfHaving = subSentence.indexOf( "having" );
+	var indexOfHaving = sentencePart.indexOf( "having" );
 
 	if ( indexOfHaving > -1 ) {
-		var verbIndices = getIndicesOfList( subSentence, verbs );
+		var verbIndices = getIndicesOfList( sentencePart, verbs );
 
 		if ( ! isUndefined( verbIndices[ 0 ] ) && ! isUndefined( verbIndices[ 0 ].index ) ) {
 			// 7 is the number of characters of the word 'having' including space.
-			return verbIndices[ 0 ].index  <= subSentence.indexOf( "having" ) + 7;
+			return verbIndices[ 0 ].index  <= sentencePart.indexOf( "having" ) + 7;
 		}
 	}
 	return false;
@@ -198,26 +198,26 @@ var isHavingException = function( subSentence, verbs ) {
 /**
  * Match 'left'. If left is preceeded by `a` or `the`, it isn't a verb.
  *
- * @param {string} subSentence The subsentence to check for the word 'left'
+ * @param {string} sentencePart The sentence part to check for the word 'left'
  * @param {Array} verbs The array with verbs to check.
  * @returns {boolean} True if it is an exception, false if it is not.
  */
-var isLeftException = function( subSentence, verbs ) {
+var isLeftException = function( sentencePart, verbs ) {
 	// Matches left with the or a preceeding.
-	var matchLeft = subSentence.match( /(the|a)\sleft/ig ) || [];
+	var matchLeft = sentencePart.match( /(the|a)\sleft/ig ) || [];
 	return matchLeft.length > 0 && verbs[ 0 ].match === "left";
 };
 
 /**
  * If the word 'fit' is preceeded by a determiner, it shouldn't be marked as active.
  *
- * @param {string} subSentence The subsentence to check for the word 'fit'
+ * @param {string} sentencePart The sentence part to check for the word 'fit'
  * @returns {boolean} True if it is an exception, false if it is not.
  */
-var isFitException = function( subSentence ) {
-	var indexOfFit = subSentence.indexOf( "fit" );
+var isFitException = function( sentencePart ) {
+	var indexOfFit = sentencePart.indexOf( "fit" );
 	if ( indexOfFit > -1 ) {
-		var subString = subSentence.substr( 0, indexOfFit );
+		var subString = sentencePart.substr( 0, indexOfFit );
 		var determinerIndices = filterWordListInSentence( determiners, subString );
 		return determinerIndices.length > 1;
 	}
@@ -227,20 +227,20 @@ var isFitException = function( subSentence ) {
 /**
  * Gets the exceptions. Some combinations shouldn't be marked as passive, so we need to filter them out.
  *
- * @param {string} subSentence The subsentence to check for exceptions.
+ * @param {string} sentencePart The sentence part to check for exceptions.
  * @param {array} verbs The array of verbs, used to determine exceptions.
  * @returns {boolean} Wether there is an exception or not.
  */
-var getExceptions = function( subSentence, verbs ) {
-	if ( isHavingException( subSentence, verbs ) ) {
+var getExceptions = function( sentencePart, verbs ) {
+	if ( isHavingException( sentencePart, verbs ) ) {
 		return true;
 	}
 
-	if ( isLeftException( subSentence, verbs ) ) {
+	if ( isLeftException( sentencePart, verbs ) ) {
 		return true;
 	}
 
-	if ( isFitException( subSentence ) ) {
+	if ( isFitException( sentencePart ) ) {
 		return true;
 	}
 
@@ -248,26 +248,26 @@ var getExceptions = function( subSentence, verbs ) {
 };
 
 /**
- * Checks the subsentence for any passive verb.
+ * Checks the sentence part for any passive verb.
  *
- * @param {string} subSentence The subsentence to check for passives.
+ * @param {string} sentencePart The sentence part to check for passives.
  * @returns {boolean} True if passive is found, false if no passive is found.
  */
-var determinePassives = function( subSentence, language ) {
+var determinePassives = function( sentencePart, language ) {
 	switch( language ) {
 		case "de":
-			return determinePassivesGerman( subSentence );
+			return determinePassivesGerman( sentencePart );
 			break;
 		case "en":
 		default:
-			var regularVerbs = getRegularVerbs( subSentence );
-			var irregularVerbs = getIrregularVerbs( subSentence );
+			var regularVerbs = getRegularVerbs( sentencePart );
+			var irregularVerbs = getIrregularVerbs( sentencePart );
 			var verbs = regularVerbs.concat( irregularVerbs );
 
 			// Checks for exceptions in the found verbs.
-			var exceptions = getExceptions( subSentence, verbs );
+			var exceptions = getExceptions( sentencePart, verbs );
 
-			// If there is any exception, this subsentence cannot be passive.
+			// If there is any exception, this sentence part cannot be passive.
 			return verbs.length > 0 && exceptions === false;
 	}
 };
@@ -285,14 +285,14 @@ module.exports = function( paper ) {
 	var sentences = getSentences( text );
 	var passiveSentences = [];
 
-	// Get subsentences for each sentence.
+	// Get sentence parts for each sentence.
 	forEach( sentences, function( sentence ) {
 		var strippedSentence = stripHTMLTags( sentence );
 
-		var subSentences = getSubsentences( strippedSentence, language );
+		var sentenceParts = getSentenceParts( strippedSentence, language );
 
 		var passive = false;
-		forEach( subSentences, function( subSentence ) {
+		forEach( sentenceParts, function( subSentence ) {
 
 			passive = passive || determinePassives( subSentence, language );
 		} );

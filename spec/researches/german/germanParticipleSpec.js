@@ -7,7 +7,7 @@ describe( "A test for checking the german Participle", function() {
 		expect( mockParticiple.hasHabenSeinException() ).toBe( true );
 		expect( mockParticiple.isInExceptionList() ).toBe( false );
 		expect( mockParticiple.hasNounSuffix() ).toBe( false );
-		expect( mockParticiple.determineSubsentenceIsPassive() ).toBe( false );
+		expect( mockParticiple.determinesSentencePartIsPassive() ).toBe( false );
 	});
 
 	it( "checks the properties of the german participle object without a passive, but with 'sein'", function() {
@@ -16,7 +16,7 @@ describe( "A test for checking the german Participle", function() {
 		expect( mockParticiple.hasHabenSeinException() ).toBe( false );
 		expect( mockParticiple.isInExceptionList() ).toBe( false );
 		expect( mockParticiple.hasNounSuffix() ).toBe( false );
-		expect( mockParticiple.determineSubsentenceIsPassive() ).toBe( true );
+		expect( mockParticiple.determinesSentencePartIsPassive() ).toBe( true );
 	});
 
 	it( "checks the properties of the german participle object without a passive, and without 'haben'/'sein'", function() {
@@ -25,7 +25,7 @@ describe( "A test for checking the german Participle", function() {
 		expect( mockParticiple.hasHabenSeinException() ).toBe( false );
 		expect( mockParticiple.isInExceptionList() ).toBe( false );
 		expect( mockParticiple.hasNounSuffix() ).toBe( false );
-		expect( mockParticiple.determineSubsentenceIsPassive() ).toBe( true );
+		expect( mockParticiple.determinesSentencePartIsPassive() ).toBe( true );
 	});
 
 	it( "checks the properties of the german participle object with a participle from the exception list.", function () {
@@ -34,7 +34,7 @@ describe( "A test for checking the german Participle", function() {
 		expect( mockParticiple.hasHabenSeinException() ).toBe( false );
 		expect( mockParticiple.isInExceptionList() ).toBe( true );
 		expect( mockParticiple.hasNounSuffix() ).toBe( false );
-		expect( mockParticiple.determineSubsentenceIsPassive() ).toBe( false );
+		expect( mockParticiple.determinesSentencePartIsPassive() ).toBe( false );
 	});
 
 	it( "checks the properties of the german participle object with a participle with a noun suffix.", function () {
@@ -43,7 +43,7 @@ describe( "A test for checking the german Participle", function() {
 		expect( mockParticiple.hasHabenSeinException() ).toBe( false );
 		expect( mockParticiple.isInExceptionList() ).toBe( false );
 		expect( mockParticiple.hasNounSuffix() ).toBe( true );
-		expect( mockParticiple.determineSubsentenceIsPassive() ).toBe( false );
+		expect( mockParticiple.determinesSentencePartIsPassive() ).toBe( false );
 	});
 
 });
