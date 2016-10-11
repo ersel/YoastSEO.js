@@ -1,6 +1,6 @@
 var SentencePart = require( "../../values/SentencePart.js" );
 
-var getParticiples = require( "./passivevoice-german/getParticiples.js");
+var getParticiples = require( "./passivevoice-german/getParticiples.js" );
 
 var GermanSentencePart = function( sentencePartText ) {
 	SentencePart.call( this, sentencePartText );

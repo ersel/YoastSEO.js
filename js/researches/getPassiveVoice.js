@@ -77,7 +77,7 @@ var getSentenceBreakers = function( sentence ) {
  * @param {string} language The language to use for determining how to get sentence parts.
  * @returns {Array} The array with all parts of a sentence that have an auxiliary.
  */
-var getSentenceParts = function(sentence, language ) {
+var getSentenceParts = function( sentence, language ) {
 	var sentenceParts = [];
 
 	switch( language ) {
@@ -251,6 +251,7 @@ var getExceptions = function( sentencePart, verbs ) {
  * Checks the sentence part for any passive verb.
  *
  * @param {string} sentencePart The sentence part to check for passives.
+ * @param {string} language The language to use for finding passive verbs.
  * @returns {boolean} True if passive is found, false if no passive is found.
  */
 var determinePassives = function( sentencePart, language ) {
@@ -293,7 +294,6 @@ module.exports = function( paper ) {
 
 		var passive = false;
 		forEach( sentenceParts, function( subSentence ) {
-
 			passive = passive || determinePassives( subSentence, language );
 		} );
 

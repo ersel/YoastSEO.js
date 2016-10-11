@@ -1,5 +1,4 @@
 var arrayToRegex = require( "../../stringProcessing/createRegexFromArray.js" );
-var matchWordInSentence = require( "../../stringProcessing/matchWordInSentence.js" );
 var stripSpaces = require( "../../stringProcessing/stripSpaces.js" );
 var removePunctuation = require( "../../stringProcessing/removePunctuation.js" );
 var indices = require( "../../stringProcessing/indices.js" );
@@ -39,7 +38,7 @@ var filterNonParticiples = function( matches ) {
  */
 var getRegularParticipleIndices = function( subSentence ) {
 	var matches = getParticiples( subSentence );
-	//todo only temp.
+	// Todo only temp.
 	var textMatches = map( matches, "_participle" );
 
 	if ( textMatches.length !== 0 ) {
