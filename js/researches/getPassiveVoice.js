@@ -8,6 +8,7 @@ var getIndicesOfList = require( "../stringProcessing/indices" ).getIndicesOfList
 var filterIndices = require( "../stringProcessing/indices" ).filterIndices;
 var sortIndices = require( "../stringProcessing/indices" ).sortIndices;
 var getLanguage = require( "../helpers/getLanguage.js" );
+var Sentence = require( "../values/Sentence.js" );
 
 // English.
 var nonverbEndingEd = require( "./english/passivevoice-english/non-verb-ending-ed.js" )();
@@ -284,11 +285,19 @@ module.exports = function( paper ) {
 	var locale = paper.getLocale();
 	var language = getLanguage( locale );
 	var sentences = getSentences( text );
+
+	var sentenceObjects = [];
+
+	forEach( sentences, function ( sentence ) {
+		sentenceObjects.push( new Sentence( sentence, locale ) );
+		return;
+	} );
+
 	var passiveSentences = [];
 
 	// Get sentence parts for each sentence.
-	forEach( sentences, function( sentence ) {
-		var strippedSentence = stripHTMLTags( sentence );
+	forEach( sentenceObjects, function( sentence ) {
+		var strippedSentence = stripHTMLTags( sentence.getSentence() );
 
 		var sentenceParts = getSentenceParts( strippedSentence, language );
 
@@ -298,7 +307,7 @@ module.exports = function( paper ) {
 		} );
 
 		if ( passive === true ) {
-			passiveSentences.push( sentence );
+			passiveSentences.push( sentence.getSentence() );
 		}
 	} );
 

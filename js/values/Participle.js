@@ -1,4 +1,12 @@
-
+/**
+ * Construct the Participle object and set the participle, sentence part, auxiliary and type.
+ *
+ * @param {string} participle The participle.
+ * @param {string} sentencePart The sentence part where the participle is from.
+ * @param {string} auxiliary The auxiliary.
+ * @param {string} type The type of participle.
+ * @constructor
+ */
 var Participle = function( participle, sentencePart, auxiliary, type ) {
 	this._participle = participle;
 	this._sentencePart = sentencePart;
@@ -50,6 +58,7 @@ Participle.prototype.determinesSentencePartIsPassive = function() {
 /**
  * Determines if the sentence is passive or not.
  * @param {boolean} passive Whether the sentence part is passive.
+ * @returns {void}
  */
 Participle.prototype.setSentencePartPassiveness = function( passive ) {
 	this._determinesSentencePartIsPassive = passive;
