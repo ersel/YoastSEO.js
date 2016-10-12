@@ -2,7 +2,7 @@ var stopwords = require( "./passivevoice-german/stopwords.js" )();
 var arrayToRegex = require( "../../stringProcessing/createRegexFromArray.js" );
 var stripSpaces = require( "../../stringProcessing/stripSpaces.js" );
 
-var SentencePart = require( "./GermanSentencePart.js");
+var SentencePart = require( "./GermanSentencePart.js" );
 
 var forEach = require( "lodash/forEach" );
 var isEmpty = require( "lodash/isEmpty" );

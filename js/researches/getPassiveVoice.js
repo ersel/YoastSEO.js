@@ -1,21 +1,19 @@
 var getSentences = require( "../stringProcessing/getSentences.js" );
-var arrayToRegex = require( "../stringProcessing/createRegexFromArray.js" );
 var stripSpaces = require( "../stringProcessing/stripSpaces.js" );
 var stripHTMLTags = require( "../stringProcessing/stripHTMLTags.js" ).stripFullTags;
 var matchWordInSentence = require( "../stringProcessing/matchWordInSentence.js" );
-var normalizeSingleQuotes = require( "../stringProcessing/quotes.js" ).normalizeSingle;
 var getIndicesOfList = require( "../stringProcessing/indices" ).getIndicesOfList;
-var filterIndices = require( "../stringProcessing/indices" ).filterIndices;
-var sortIndices = require( "../stringProcessing/indices" ).sortIndices;
 var getLanguage = require( "../helpers/getLanguage.js" );
 var Sentence = require( "../values/Sentence.js" );
 
 // English.
 var nonverbEndingEd = require( "./english/passivevoice-english/non-verb-ending-ed.js" )();
 var determiners = require( "./english/passivevoice-english/determiners.js" )();
-var auxiliaries = require( "./english/passivevoice-english/auxiliaries.js" )();
 var irregulars = require( "./english/passivevoice-english/irregulars.js" )();
-var stopwords = require( "./english/passivevoice-english/stopwords.js" )();
+var getSentencePartsEnglish = require( "./english/getSentenceParts.js" );
+
+var regularVerbsRegex = /\w+ed($|[ \n\r\t\.,'\(\)\"\+\-;!?:\/»«‹›<>])/ig;
+var irregularExclusionArray = [ "get", "gets", "getting", "got", "gotten" ];
 
 // German.
 var getSentencePartsGerman = require( "./german/getSentenceParts.js" );
@@ -25,51 +23,6 @@ var filter = require( "lodash/filter" );
 var isUndefined = require( "lodash/isUndefined" );
 var forEach = require( "lodash/forEach" );
 var includes = require( "lodash/includes" );
-
-var auxiliaryRegex = arrayToRegex( auxiliaries );
-var verbEndingInIngRegex = /\w+ing($|[ \n\r\t\.,'\(\)\"\+\-;!?:\/»«‹›<>])/ig;
-var regularVerbsRegex = /\w+ed($|[ \n\r\t\.,'\(\)\"\+\-;!?:\/»«‹›<>])/ig;
-
-var ingExclusionArray = [ "king", "cling", "ring", "being" ];
-var irregularExclusionArray = [ "get", "gets", "getting", "got", "gotten" ];
-
-/**
- * Gets active verbs (ending in ing) to determine sentence breakers.
- *
- * @param {string} sentence The sentence to get the active verbs from.
- * @returns {Array} The array with valid matches.
- */
-var getVerbsEndingInIng = function( sentence ) {
-	// Matches the sentences with words ending in ing
-	var matches = sentence.match( verbEndingInIngRegex ) || [];
-
-	// Filters out words ending in -ing that aren't verbs.
-	return filter( matches, function( match ) {
-		return ! includes( ingExclusionArray, stripSpaces( match ) );
-	} );
-};
-
-/**
- * Gets the indexes of sentence breakers (auxiliaries, stopwords and active verbs) to determine sentence parts.
- * Stopwords are filtered because they can contain duplicate matches, like "even though" and "though".
- *
- * @param {string} sentence The sentence to check for indices of auxiliaries, stopwords and active verbs.
- * @returns {Array} The array with valid indices to use for determining sentence parts.
- */
-var getSentenceBreakers = function( sentence ) {
-	sentence = sentence.toLocaleLowerCase();
-	var auxiliaryIndices = getIndicesOfList( sentence, auxiliaries );
-
-	var stopwordIndices = getIndicesOfList( sentence, stopwords );
-	stopwordIndices = filterIndices( stopwordIndices );
-
-	var ingVerbs = getVerbsEndingInIng( sentence );
-	var ingVerbsIndices = getIndicesOfList( sentence, ingVerbs );
-
-	// Concat all indices arrays and sort them.
-	var indices = [].concat( auxiliaryIndices, stopwordIndices, ingVerbsIndices );
-	return sortIndices( indices );
-};
 
 /**
  * Gets the sentence parts from a sentence by determining sentence breakers.
@@ -90,28 +43,9 @@ var getSentenceParts = function( sentence, language ) {
 			break;
 		case "en":
 		default:
-			sentence = normalizeSingleQuotes( sentence );
-
-			// First check if there is an auxiliary word in the sentence.
-			if( sentence.match( auxiliaryRegex ) !== null ) {
-				var indices = getSentenceBreakers( sentence );
-
-				// Get the words after the found auxiliary.
-				for ( var i = 0; i < indices.length; i++ ) {
-					var endIndex = sentence.length;
-					if ( ! isUndefined( indices[ i + 1 ] ) ) {
-						endIndex = indices[ i + 1 ].index;
-					}
-
-					// Cut the sentence from the current index to the endIndex (start of next breaker, of end of sentence).
-					var sentencePart = stripSpaces( sentence.substr( indices[ i ].index, endIndex - indices[ i ].index ) );
-					sentenceParts.push( sentencePart );
-				}
-			}
-
-			// If a sentence part doesn't have an auxiliary, we don't need it, so it can be filtered out.
-			sentenceParts = filter( sentenceParts, function( sentencePart ) {
-				return sentencePart.match( auxiliaryRegex ) !== null;
+			sentencePartsObjects = getSentencePartsEnglish( sentence );
+			forEach( sentencePartsObjects, function( part ) {
+				sentenceParts.push( part.getSentencePartText() );
 			} );
 			break;
 	}
@@ -291,7 +225,7 @@ module.exports = function( paper ) {
 
 	var sentenceObjects = [];
 
-	forEach( sentences, function ( sentence ) {
+	forEach( sentences, function( sentence ) {
 		sentenceObjects.push( new Sentence( sentence, locale ) );
 		return;
 	} );
