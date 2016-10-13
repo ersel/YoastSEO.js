@@ -1,10 +1,10 @@
 var getWords = require( "../../../stringProcessing/getWords.js" );
-var regexFunction = require( "../../../../js/researches/german/passivevoice-german/regex.js" )();
-var verbsBeginningWithErVerEntBeZerHer = regexFunction.verbsBeginningWithErVerEntBeZer;
-var verbsBeginningWithGe = regexFunction.verbsBeginningWithGe;
-var verbsWithGeInMiddle = regexFunction.verbsWithGeInMiddle;
-var verbsWithErVerEntBeZerHerInMiddle = regexFunction.verbsWithErVerEntBeZerInMiddle;
-var verbsEndingWithIert = regexFunction.verbsEndingWithIert;
+var regexFunction = require( "./participleRegexes.js" )();
+var verbsBeginningWithErVerEntBeZerHer = regexFunction.participlesBeginningWithErVerEntBeZer;
+var verbsBeginningWithGe = regexFunction.participlesBeginningWithGe;
+var verbsWithGeInMiddle = regexFunction.participlesWithGeInMiddle;
+var verbsWithErVerEntBeZerHerInMiddle = regexFunction.participlesWithErVerEntBeZerInMiddle;
+var verbsEndingWithIert = regexFunction.participlesEndingWithIert;
 
 var GermanParticiple = require( "../GermanParticiple.js" );
 

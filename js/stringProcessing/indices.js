@@ -36,7 +36,6 @@ function getIndices( part, text ) {
  */
 var getIndicesOfList = function( sentence, matches ) {
 	var matchedParts = [];
-
 	forEach( matches, function( part ) {
 		part = stripSpaces( part );
 		if ( ! matchWordInSentence( part, sentence ) ) {

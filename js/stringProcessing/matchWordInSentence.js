@@ -22,7 +22,6 @@ module.exports = function( word, sentence ) {
 	// To ensure proper matching, make everything lowercase.
 	word = word.toLocaleLowerCase();
 	sentence = sentence.toLocaleLowerCase();
-
 	var occurrenceStart = sentence.indexOf( word );
 	var occurrenceEnd = occurrenceStart + word.length;
 
@@ -30,7 +29,6 @@ module.exports = function( word, sentence ) {
 	if ( occurrenceStart === -1 ) {
 		return false;
 	}
-
 	// Check if the previous and next character are word boundaries to determine if a complete word was detected
 	var previousCharacter = characterInBoundary( sentence[ occurrenceStart - 1 ] ) || occurrenceStart === 0;
 	var nextCharacter = characterInBoundary( sentence[ occurrenceEnd ] ) || occurrenceEnd === sentence.length;

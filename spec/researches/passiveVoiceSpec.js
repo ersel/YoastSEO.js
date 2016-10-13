@@ -262,11 +262,6 @@ describe( "detecting passive voice in sentences", function() {
 		expect( passiveVoice( paper ).passives.length ).toBe( 1 );
 	});
 
-	it( "returns active voice ( combination with fit )", function() {
-		paper = new Paper( "It was the right fit" );
-		expect( passiveVoice( paper ).passives.length ).toBe( 0 );
-	});
-
 	it( "returns passive voice ( combination with fit )", function() {
 		// Passive: was fit.
 		paper = new Paper( "He was fit with hearing aids" );
