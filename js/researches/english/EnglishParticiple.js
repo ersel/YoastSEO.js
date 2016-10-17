@@ -9,6 +9,7 @@ var irregularExclusionArray = [ "get", "gets", "getting", "got", "gotten" ];
 var forEach = require( "lodash/forEach" );
 var includes = require( "lodash/includes" );
 var isEmpty = require( "lodash/isEmpty" );
+var intersection = require( "lodash/intersection" );
 
 /**
  * Checks whether a participle is directly preceded by a given word.
@@ -106,7 +107,7 @@ EnglishParticiple.prototype.hasRidException = function() {
 	var participle = this.getParticiple();
 	var auxiliaries = this.getAuxiliaries();
 	if ( participle === "rid" ) {
-		return includes( irregularExclusionArray, auxiliaries );
+		return  ! isEmpty ( intersection( irregularExclusionArray, auxiliaries ) );
 	}
 	return false;
 };

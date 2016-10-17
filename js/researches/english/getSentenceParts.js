@@ -15,7 +15,7 @@ var stopwords = require( "./passivevoice-english/stopwords.js" )();
 var filter = require( "lodash/filter" );
 var isUndefined = require( "lodash/isUndefined" );
 var includes = require( "lodash/includes" );
-
+var map = require( "lodash/map" );
 
 /**
  * Gets active verbs (ending in ing) to determine sentence breakers.
@@ -80,11 +80,14 @@ var getSentenceParts = function( sentence ) {
 			// Cut the sentence from the current index to the endIndex (start of next breaker, of end of sentence).
 			var sentencePart = stripSpaces( sentence.substr( indices[ i ].index, endIndex - indices[ i ].index ) );
 
-			// Todo: Do we want the following check here? Or after the Sentence Part Objects are made?
+			var auxiliaryMatches = sentencePart.match( auxiliaryRegex );
+
 			// If a sentence part doesn't have an auxiliary, we don't need it, so it can be filtered out.
-			var auxiliaryMatch = sentencePart.match( auxiliaryRegex );
-			if ( auxiliaryMatch !== null ) {
-				sentenceParts.push( new SentencePart( sentencePart, auxiliaryMatch ) );
+			if ( auxiliaryMatches !== null ) {
+				auxiliaryMatches = map( auxiliaryMatches, function( auxiliaryMatch ) {
+					return stripSpaces( auxiliaryMatch )
+				} );
+				sentenceParts.push( new SentencePart( sentencePart, auxiliaryMatches ) );
 			}
 		}
 	}

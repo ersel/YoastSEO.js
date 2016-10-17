@@ -5,10 +5,11 @@ var SentencePart = require( "../../values/SentencePart.js" );
 /**
  * Creates a German specific sentence part.
  * @param {string} sentencePartText The text from the sentence part.
+ * @param {Array} auxiliaries The list of auxiliaries from the sentence part.
  * @constructor
  */
-var EnglishSentencePart = function( sentencePartText ) {
-	SentencePart.call( this, sentencePartText );
+var EnglishSentencePart = function( sentencePartText, auxiliaries ) {
+	SentencePart.call( this, sentencePartText, auxiliaries );
 };
 
 require( "util" ).inherits( EnglishSentencePart, SentencePart );
