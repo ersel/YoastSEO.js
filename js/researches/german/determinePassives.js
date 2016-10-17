@@ -17,84 +17,22 @@ var exceptionsRegex = /\S+(apparat|arbeit|dienst|haft|halt|kraft|not|pflicht|sch
 var auxiliaryRegex = arrayToRegex( auxiliaries );
 
 /**
- * Filters out non-participles that look like participles.
+ * Determines whether a sentence part is passive.
  *
- * @param {Array} matches The array with matched participles.
- * @returns {Array} The filtered array with participles.
- */
-var filterNonParticiples = function( matches ) {
-	return filter( matches, function( match ) {
-		match = stripSpaces( match );
-		match = removePunctuation( match );
-		return match.match( exceptionsRegex ) !== null || ! includes( exceptionsParticiplesActive, match );
-	} );
-};
-
-/**
- * Finds participles and their index in subsentences.
- *
- * @param {string} subSentence The subsentence to find participles in.
- * @returns {Array} The filtered array with participles and their index.
- */
-var getRegularParticipleIndices = function( subSentence ) {
-	var matches = getParticiples( subSentence );
-	// Todo only temp.
-	var textMatches = map( matches, "_participle" );
-
-	if ( textMatches.length !== 0 ) {
-		var filteredParticiples = filterNonParticiples( textMatches );
-	}
-	return indices.getIndicesOfList( subSentence, filteredParticiples );
-};
-
-/**
- * Gets the indices of participles.
- *
- * @param {string} subSentence The subsentence to find the participles' indices in.
- * @returns {Array} The array with participles and their index.
- */
-var getParticipleIndices = function( subSentence ) {
-	var irregularsIndices = indices.getIndicesOfList( subSentence, irregularParticiples );
-	var participleIndices = getRegularParticipleIndices( subSentence );
-	return irregularsIndices.concat( participleIndices );
-};
-
-/**
- * Checks whether a participle is followed by 'haben' or 'sein'.
- * If a participle is followed by one of these, the sentence is not passive.
- *
- * @param {string} subSentence The subsentence to find a passive irregular in.
- * @returns {boolean} Returns true if passive, otherwise returns false.
- */
-var isFollowedByHabenSein = function( subSentence ) {
-	var participleIndices = getParticipleIndices( subSentence );
-	var habenSeinIndices = indices.getIndicesOfList( subSentence, [ "haben", "sein" ] );
-	var followedByHabenSein = false;
-	if( participleIndices.length > 0 ) {
-		if ( habenSeinIndices.length === 0 ) {
-			return true;
-		}
-		var indicesToMatch = map( habenSeinIndices, "index" );
-		forEach( participleIndices, function( index ) {
-			followedByHabenSein = followedByHabenSein || ! includes( indicesToMatch, index.index + index.match.length + 1 );
-		} );
-	}
-	return followedByHabenSein;
-};
-
-/**
- * Determines whether a subsentence is passive.
- *
- * @param {string} subSentence The subsentence to determine voice for.
+ * @param {string} sentencePart The sentence part to determine voice for.
  * @returns {boolean} Returns true if passive, otherwise returns false.
  */
 
-module.exports = function( subSentence ) {
+module.exports = function( sentencePart ) {
 	var passive = false;
-	if( subSentence.match( auxiliaryRegex ) === null ) {
+	if (sentencePart.match( auxiliaryRegex ) === null ) {
 		return passive;
 	}
-	passive = passive || isFollowedByHabenSein( subSentence );
-
+	var participles = getParticiples( sentencePart );
+	forEach( participles, function( participle ) {
+		if ( participle.determinesSentencePartIsPassive() ) {
+			passive = true;
+		}
+	} );
 	return passive;
 };

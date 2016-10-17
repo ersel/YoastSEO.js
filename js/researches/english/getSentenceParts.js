@@ -67,7 +67,7 @@ var getSentenceParts = function( sentence ) {
 
 	sentence = normalizeSingleQuotes( sentence );
 
-	// First check if there is an auxiliary word in the sentence.
+	// First check if there is an auxiliary in the sentence.
 	if ( sentence.match( auxiliaryRegex ) !== null ) {
 		var indices = getSentenceBreakers( sentence );
 		// Get the words after the found auxiliary.

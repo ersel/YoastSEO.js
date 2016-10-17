@@ -89,7 +89,6 @@ describe( "A test for checking the English Participle", function() {
 		expect( mockParticiple.determinesSentencePartIsPassive() ).toBe( false );
 	});
 
-
 	it( "checks the properties of the English participle object with 'fit' that is not an exception", function() {
 		var mockParticiple = new EnglishParticiple( "fit", "The data was then fit by the optimal model",  "was",  "irregular" );
 		expect( mockParticiple.getParticiple() ).toBe( "fit" );

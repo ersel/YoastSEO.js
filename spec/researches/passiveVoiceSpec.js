@@ -262,6 +262,18 @@ describe( "detecting passive voice in sentences", function() {
 		expect( passiveVoice( paper ).passives.length ).toBe( 1 );
 	});
 
+	/* Currently, the only time we verify that 'fit' is a noun, is when it is directly preceded by a determiner.
+	 However, 'fit' can also be a noun when it is preceded by an adjective, like in "It was the *right* fit",
+	 or by much longer adjectival constructions, like in "It was the *right, but slightly disappointing* fit."
+	 We cannot detect adjectives/adjectival constructions yet. Randomly looking for a determiner in the string
+	 preceding 'fit' is not an option, because in that case 'fit' would be seen as a noun in sentences
+	 like "The model was fit by with the formula method" as well.
+	 */
+	// it( "returns active voice ( combination with fit )", function() {
+	// 	paper = new Paper( "It was the right fit" );
+	// 	expect( passiveVoice( paper ).passives.length ).toBe( 0 );
+	// });
+
 	it( "returns passive voice ( combination with fit )", function() {
 		// Passive: was fit.
 		paper = new Paper( "He was fit with hearing aids" );
@@ -302,7 +314,7 @@ describe( "detecting passive voice in sentences", function() {
 		paper = new Paper( "As a result of that, a lot of blog posts will GET LOST in a structure that is too flat." );
 		expect( passiveVoice( paper ).passives.length ).toBe( 1 );
 	});
-	
+
 	it( "returns the passive sentences with multiple passive subsentences", function () {
 		// Passive: is cleaned, is cleaned (2 times).
 		paper = new Paper("Once a week, the house is cleaned by Tom where the house is cleaned by Jane.");

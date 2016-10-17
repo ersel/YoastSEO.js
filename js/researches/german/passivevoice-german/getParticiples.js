@@ -1,10 +1,11 @@
 var getWords = require( "../../../stringProcessing/getWords.js" );
 var regexFunction = require( "./participleRegexes.js" )();
-var verbsBeginningWithErVerEntBeZerHer = regexFunction.participlesBeginningWithErVerEntBeZer;
-var verbsBeginningWithGe = regexFunction.participlesBeginningWithGe;
-var verbsWithGeInMiddle = regexFunction.participlesWithGeInMiddle;
-var verbsWithErVerEntBeZerHerInMiddle = regexFunction.participlesWithErVerEntBeZerInMiddle;
-var verbsEndingWithIert = regexFunction.participlesEndingWithIert;
+var participlesBeginningWithErVerEntBeZerHer = regexFunction.participlesBeginningWithErVerEntBeZer;
+var participlesBeginningWithGe = regexFunction.participlesBeginningWithGe;
+var participlesWithGeInMiddle = regexFunction.participlesWithGeInMiddle;
+var participlesWithErVerEntBeZerHerInMiddle = regexFunction.participlesWithErVerEntBeZerInMiddle;
+var participlesEndingWithIert = regexFunction.participlesEndingWithIert;
+var irregularParticiples = regexFunction.irregularParticiples;
 
 var GermanParticiple = require( "../GermanParticiple.js" );
 
@@ -18,29 +19,31 @@ var forEach = require( "lodash/forEach" );
  */
 module.exports = function( sentence ) {
 	var words = getWords( sentence );
-
 	var foundParticiples = [];
-
 	forEach( words, function( word ) {
-		if( verbsBeginningWithGe( word ).length !== 0 ) {
+		if( participlesBeginningWithGe( word ).length !== 0 ) {
 			foundParticiples.push( new GermanParticiple( word, sentence, "", "ge at beginning" ) );
 			return;
 		}
-		if ( verbsWithGeInMiddle( word ).length !== 0 ) {
+		if ( participlesWithGeInMiddle( word ).length !== 0 ) {
 			foundParticiples.push( new GermanParticiple( word, sentence, "", "ge in the middle" ) );
 			return;
 		}
-		if ( verbsBeginningWithErVerEntBeZerHer( word ).length !== 0 ) {
+		if ( participlesBeginningWithErVerEntBeZerHer( word ).length !== 0 ) {
 			foundParticiples.push( new GermanParticiple( word, sentence, "", "er/ver/ent/be/zer/her at beginning" ) );
 			return;
 		}
-		if ( verbsWithErVerEntBeZerHerInMiddle( word ).length !== 0 ) {
+		if ( participlesWithErVerEntBeZerHerInMiddle( word ).length !== 0 ) {
 			foundParticiples.push( new GermanParticiple( word, sentence, "", "er/ver/ent/be/zer/her in the middle" ) );
 			return;
 		}
-		if ( verbsEndingWithIert( word ).length !== 0 ) {
+		if ( participlesEndingWithIert( word ).length !== 0 ) {
 			foundParticiples.push( new GermanParticiple( word, sentence, "", "iert at the end" ) );
 		}
+		if ( irregularParticiples( word ).length !== 0 ) {
+			foundParticiples.push( new GermanParticiple( word, sentence, "", "irregular" ) );
+		}
 	} );
+
 	return foundParticiples;
 };
