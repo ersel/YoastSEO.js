@@ -25,20 +25,13 @@ var getSentenceParts = function( sentence, language ) {
 
 	switch( language ) {
 		case "de":
-			var sentencePartsObjects = getSentencePartsGerman( sentence );
-			forEach( sentencePartsObjects, function( part ) {
-				sentenceParts.push( part.getSentencePartText() );
-			} );
+			sentenceParts = getSentencePartsGerman( sentence );
 			break;
 		case "en":
 		default:
-			sentencePartsObjects = getSentencePartsEnglish( sentence );
-			forEach( sentencePartsObjects, function( part ) {
-				sentenceParts.push( part.getSentencePartText() );
-			} );
+			sentenceParts = getSentencePartsEnglish( sentence );
 			break;
 	}
-
 	return sentenceParts;
 };
 

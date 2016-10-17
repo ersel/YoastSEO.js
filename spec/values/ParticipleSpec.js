@@ -6,7 +6,7 @@ describe( "A test for checking the german Participle", function() {
 		expect( mockParticiple.getParticiple() ).toBe( "geschlossen" );
 		expect( mockParticiple.getSentencePart() ).toBe( "Es wird geschlossen worden sein." );
 		expect( mockParticiple.getType() ).toBe( "irregular" );
-		expect( mockParticiple.getAuxiliary() ).toBe( "werden" );
+		expect( mockParticiple.getAuxiliaries() ).toBe( "werden" );
 		expect( mockParticiple.determinesSentencePartIsPassive() ).toBe( true );
 	});
 
@@ -16,7 +16,7 @@ describe( "A test for checking the german Participle", function() {
 		expect( mockParticiple.getParticiple() ).toBe( "geschlossen" );
 		expect( mockParticiple.getSentencePart() ).toBe( "Wir werden geschlossen haben." );
 		expect( mockParticiple.getType() ).toBe( "irregular" );
-		expect( mockParticiple.getAuxiliary() ).toBe( "werden" );
+		expect( mockParticiple.getAuxiliaries() ).toBe( "werden" );
 		expect( mockParticiple.determinesSentencePartIsPassive() ).toBe( false );
 	});
 

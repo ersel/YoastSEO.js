@@ -3,15 +3,15 @@
  *
  * @param {string} participle The participle.
  * @param {string} sentencePart The sentence part where the participle is from.
- * @param {string} auxiliary The auxiliary.
+ * @param {Array} auxiliaries The list with auxiliaries.
  * @param {string} type The type of participle.
  * @constructor
  */
-var Participle = function( participle, sentencePart, auxiliary, type ) {
+var Participle = function( participle, sentencePart, auxiliaries, type ) {
 	this._participle = participle;
 	this._sentencePart = sentencePart;
 	this._type = type;
-	this._auxiliary = auxiliary;
+	this._auxiliaries = auxiliaries;
 	this._determinesSentencePartIsPassive = true;
 };
 
@@ -40,11 +40,11 @@ Participle.prototype.getType = function() {
 };
 
 /**
- * Returns the auxiliary.
- * @returns {String} The auxiliary.
+ * Returns the auxiliaries.
+ * @returns {String} The auxiliaries.
  */
-Participle.prototype.getAuxiliary = function() {
-	return this._auxiliary;
+Participle.prototype.getAuxiliaries = function() {
+	return this._auxiliaries;
 };
 
 /**

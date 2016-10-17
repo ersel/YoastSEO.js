@@ -22,10 +22,11 @@ var auxiliaryRegex = arrayToRegex( auxiliaries );
  * @param {string} sentencePart The sentence part to determine voice for.
  * @returns {boolean} Returns true if passive, otherwise returns false.
  */
-
 module.exports = function( sentencePart ) {
 	var passive = false;
-	if (sentencePart.match( auxiliaryRegex ) === null ) {
+	var sentencePartText = sentencePart.getSentencePartText();
+	var auxiliaryMatches = sentencePartText.match( auxiliaryRegex );
+	if ( auxiliaryMatches === null ) {
 		return passive;
 	}
 	var participles = getParticiples( sentencePart );

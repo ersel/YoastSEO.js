@@ -104,9 +104,9 @@ EnglishParticiple.prototype.isNonVerbEndingEd = function() {
  */
 EnglishParticiple.prototype.hasRidException = function() {
 	var participle = this.getParticiple();
-	var auxiliary = this.getAuxiliary();
+	var auxiliaries = this.getAuxiliaries();
 	if ( participle === "rid" ) {
-		return includes( irregularExclusionArray, auxiliary );
+		return includes( irregularExclusionArray, auxiliaries );
 	}
 	return false;
 };

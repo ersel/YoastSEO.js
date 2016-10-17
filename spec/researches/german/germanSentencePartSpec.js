@@ -9,7 +9,7 @@ describe( "creates a german sentence part", function() {
 
 describe( "gets participles of german sentence", function() {
 	it( "returns participles", function() {
-		var mockPart = new GermanSentencePart( "Es wurde gekauft" );
+		var mockPart = new GermanSentencePart( "Es wurde gekauft", [ "wurde" ] );
 		var foundParticiples = mockPart.getParticiples()[ 0 ];
 		expect( foundParticiples.getParticiple() ).toEqual( "gekauft" );
 	});

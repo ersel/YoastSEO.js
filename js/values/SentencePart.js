@@ -2,12 +2,14 @@
  * Constructs a sentence part object.
  *
  * @param {string} sentencePartText The text in the sentence part.
+ * @param {Array} auxiliaries The list of auxiliaries from the sentence part.
  * @param {string} locale The locale used for this sentence part.
  *
  * @constructor
  */
-var SentencePart = function( sentencePartText, locale ) {
+var SentencePart = function( sentencePartText, auxiliaries, locale ) {
 	this._sentencePartText = sentencePartText;
+	this._auxiliaries = auxiliaries;
 	this._locale = locale;
 	this._isPassive = false;
 };
@@ -28,6 +30,15 @@ SentencePart.prototype.getSentencePartText = function() {
  */
 SentencePart.prototype.isPassive = function() {
 	return this._isPassive;
+};
+
+/**
+ * Returns the list of auxiliaries from a sentence part.
+ *
+ * @returns {Array} The list of auxiliaries.
+ */
+SentencePart.prototype.getAuxiliaries = function() {
+	return this._auxiliaries;
 };
 
 /**

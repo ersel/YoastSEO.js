@@ -82,8 +82,9 @@ var getSentenceParts = function( sentence ) {
 
 			// Todo: Do we want the following check here? Or after the Sentence Part Objects are made?
 			// If a sentence part doesn't have an auxiliary, we don't need it, so it can be filtered out.
-			if ( sentencePart.match( auxiliaryRegex ) !== null ) {
-				sentenceParts.push( new SentencePart( sentencePart ) );
+			var auxiliaryMatch = sentencePart.match( auxiliaryRegex );
+			if ( auxiliaryMatch !== null ) {
+				sentenceParts.push( new SentencePart( sentencePart, auxiliaryMatch ) );
 			}
 		}
 	}

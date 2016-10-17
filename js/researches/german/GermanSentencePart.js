@@ -20,7 +20,7 @@ require( "util" ).inherits( GermanSentencePart, SentencePart );
  * @returns {Array} The array of Participle Objects.
  */
 GermanSentencePart.prototype.getParticiples = function() {
-	return getParticiples( this.getSentencePartText() );
+	return getParticiples( this );
 };
 
 module.exports = GermanSentencePart;

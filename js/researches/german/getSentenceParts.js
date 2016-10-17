@@ -1,13 +1,14 @@
 var stopwords = require( "./passivevoice-german/stopwords.js" )();
 var arrayToRegex = require( "../../stringProcessing/createRegexFromArray.js" );
 var stripSpaces = require( "../../stringProcessing/stripSpaces.js" );
-
 var SentencePart = require( "./GermanSentencePart.js" );
+var auxiliaries = require( "./passivevoice-german/auxiliaries.js" )();
 
 var forEach = require( "lodash/forEach" );
 var isEmpty = require( "lodash/isEmpty" );
 
 var stopwordRegex = arrayToRegex( stopwords );
+var auxiliaryRegex = arrayToRegex( auxiliaries );
 
 /**
  * Splits sentences into sentence parts based on stopwords.
@@ -22,13 +23,13 @@ function splitOnWord( sentence, matches ) {
 	forEach( matches, function( match ) {
 		var splitSentence = currentSentence.split( match );
 		if ( ! isEmpty( splitSentence[ 0 ] ) ) {
-			sentenceParts.push( new SentencePart( splitSentence[ 0 ] ) );
+			sentenceParts.push( new SentencePart( splitSentence[ 0 ], splitSentence[ 0 ].match( auxiliaryRegex || [] ) ) );
 		}
 		var startIndex = currentSentence.indexOf( match );
 		var endIndex = currentSentence.length;
 		currentSentence = ( stripSpaces( currentSentence.substr( startIndex, endIndex ) ) );
 	} );
-	sentenceParts.push( new SentencePart( stripSpaces( currentSentence ) ) );
+	sentenceParts.push( new SentencePart( stripSpaces( currentSentence ), currentSentence.match( auxiliaryRegex || [] ) ) );
 	return sentenceParts;
 }
 
