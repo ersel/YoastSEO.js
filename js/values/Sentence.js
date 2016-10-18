@@ -14,16 +14,18 @@ var defaultAttributes = {
  * @constructor
  */
 var Sentence = function( sentence, locale ) {
-	this._sentence = sentence;
+	this._sentenceText = sentence;
 	this._locale = locale || defaultAttributes.locale;
+	this._isPassive = false;
+	this._sentenceParts = [];
 };
 
 /**
- * Returns the sentence.
+ * Returns the sentence text.
  * @returns {String} The sentence.
  */
-Sentence.prototype.getSentence = function() {
-	return this._sentence;
+Sentence.prototype.getSentenceText = function() {
+	return this._sentenceText;
 };
 
 /**
@@ -34,5 +36,21 @@ Sentence.prototype.getLocale = function() {
 	return this._locale;
 };
 
-module.exports = Sentence;
+/**
+ * Determines the sentence parts.
+ * @returns {void}
+ */
+Sentence.prototype.determineSentenceParts = function() {
 
+	this._sentenceParts;
+};
+
+/**
+ * Returns the sentence parts.
+ * @returns {Array} The list of sentence parts.
+ */
+Sentence.prototype.getSentenceParts = function() {
+	return this._sentenceParts;
+};
+
+module.exports = Sentence;

@@ -7,6 +7,7 @@
  * @param {string} type The type of participle.
  * @constructor
  */
+// Todo: move auxiliaries, type and locale to attributes object. See Paper.
 var Participle = function( participle, sentencePart, auxiliaries, type ) {
 	this._participle = participle;
 	this._sentencePart = sentencePart;

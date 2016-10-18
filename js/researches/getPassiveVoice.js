@@ -76,7 +76,7 @@ module.exports = function( paper ) {
 
 	// Get sentence parts for each sentence.
 	forEach( sentenceObjects, function( sentence ) {
-		var strippedSentence = stripHTMLTags( sentence.getSentence() );
+		var strippedSentence = stripHTMLTags( sentence.getSentenceText() );
 
 		var sentenceParts = getSentenceParts( strippedSentence, language );
 
@@ -87,7 +87,7 @@ module.exports = function( paper ) {
 		} );
 
 		if ( passive === true ) {
-			passiveSentences.push( sentence.getSentence() );
+			passiveSentences.push( sentence.getSentenceText() );
 		}
 	} );
 
