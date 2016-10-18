@@ -2,6 +2,7 @@ var passiveVoiceAssessment = require( "../../js/assessments/passiveVoiceAssessme
 var Paper = require( "../../js/values/Paper.js" );
 var Factory = require( "../helpers/factory.js" );
 var i18n = Factory.buildJed();
+var Mark = require( "../../js/values/Mark.js" );
 
 var paper = new Paper();
 describe( "An assessment for scoring passive voice.", function() {
@@ -44,6 +45,32 @@ describe( "An assessment for scoring passive voice.", function() {
 			"which is more than the recommended maximum of 10%. Try to use their active counterparts." );
 		expect( assessment.hasMarks() ).toBe( true );
 	} );
+});
 
+describe( "A test for the applicableness of the passive voice assessment.", function() {
+	it( "checks the applicableness of the passive voice assessment in the case of an unavailable locale", function() {
+		var mockPaper = new Paper( "Hallo", { locale: "nl_NL" } );
+		expect( passiveVoiceAssessment.isApplicable( mockPaper ) ).toBe( false );
+	} );
 
+	it( "checks the applicableness of the passive voice assessment in the case of an empty Paper", function() {
+		var mockPaper = new Paper( "" );
+		expect( passiveVoiceAssessment.isApplicable( mockPaper ) ).toBe( false );
+	} );
+});
+
+describe( "A test for marking the sentences", function() {
+	it ("returns markers", function() {
+		var passiveVoice = Factory.buildMockResearcher( { passives: [ "He was robbed." ] } );
+		var expected = [
+			new Mark({ original: 'He was robbed.', marked: "<yoastmark class='yoast-text-mark'>He was robbed.</yoastmark>" }),
+		];
+		expect( passiveVoiceAssessment.getMarks( paper, passiveVoice ) ).toEqual( expected );
+	} );
+
+	it ("returns no markers", function() {
+		var passiveVoice = Factory.buildMockResearcher( [ { passives: [ ] } ] );
+		var expected = [];
+		expect( passiveVoiceAssessment.getMarks( paper, passiveVoice ) ).toEqual( expected );
+	} );
 });
