@@ -38,17 +38,19 @@ var getSentenceParts = function( sentence, language ) {
 /**
  * Checks the sentence part for any passive verb.
  *
- * @param {string} sentencePart The sentence part to check for passives.
+ * @param {object} sentencePart The sentence part object to check for passives.
  * @param {string} language The language to use for finding passive verbs.
  * @returns {boolean} True if passive is found, false if no passive is found.
  */
 var determinePassives = function( sentencePart, language ) {
 	switch( language ) {
 		case "de":
-			return determinePassivesGerman( sentencePart );
+			sentencePart.setPassive( determinePassivesGerman( sentencePart ) );
+			break;
 		case "en":
 		default:
-			return determinePassivesEnglish( sentencePart );
+			sentencePart.setPassive( determinePassivesEnglish( sentencePart ) );
+			break;
 	}
 };
 
@@ -80,7 +82,8 @@ module.exports = function( paper ) {
 
 		var passive = false;
 		forEach( sentenceParts, function( subSentence ) {
-			passive = passive || determinePassives( subSentence, language );
+			determinePassives( subSentence, language );
+			passive = passive || subSentence.isPassive();
 		} );
 
 		if ( passive === true ) {
